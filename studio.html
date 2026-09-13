@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAQIL_PAUL // CORE_OS — Full Stack Engineering Unit</title>
+<meta name="description" content="Hardware-inspired independent studio. Full stack web, local-first architecture, Python automation, UI engineering.">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = { darkMode: 'class', theme: { extend: { colors: { acc: '#ff4500' }, fontFamily: { sans: ['-apple-system','BlinkMacSystemFont','Inter','Segoe UI','sans-serif'], mono: ['ui-monospace','SFMono-Regular','Menlo','Monaco','Consolas','monospace'] } } } }
+</script>
+<style>
+:root{--acc:#ff4500;--glow:0 0 22px rgba(255,69,0,.5)}
+html{background:#09090b;scroll-behavior:smooth}
+body{background:#09090b}
+body[data-power="eco"]{--acc:#c2410c;--glow:0 0 6px rgba(255,69,0,.2)}
+body[data-power="boost"]{--acc:#ff4500;--glow:0 0 34px rgba(255,69,0,.75)}
+::selection{background:#ff4500;color:#fff}
+.display{letter-spacing:-0.045em;line-height:.9}
+.dotmatrix{background-image:radial-gradient(#3f3f46 1px,transparent 1px);background-size:8px 8px}
+.dotmatrix-orange{background-image:radial-gradient(rgba(255,69,0,.6) 1px,transparent 1px);background-size:8px 8px}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .55s ease,transform .55s ease}
+.reveal.visible{opacity:1;transform:none}
+.blink{animation:blink 1.1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.hw{border:3px solid #3f3f46;background:#0c0c0e;position:relative}
+.hw-orange{border-color:var(--acc)}
+.cross{position:absolute;font-family:ui-monospace,monospace;font-size:14px;color:#71717a;pointer-events:none;user-select:none;line-height:1}
+.screw{position:absolute;width:16px;height:16px;border-radius:9999px;background:radial-gradient(circle at 35% 35%,#d4d4d8,#52525b 70%);border:2px solid #18181b;pointer-events:none}
+.screw::after{content:'';position:absolute;left:2px;right:2px;top:50%;height:2px;margin-top:-1px;background:#18181b;transform:rotate(38deg)}
+.card-lift{transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease}
+.card-lift:hover{transform:translate(-3px,-3px);border-color:#fafafa;box-shadow:7px 7px 0 var(--acc)}
+.gear{display:inline-block;transition:transform .5s cubic-bezier(.22,1,.36,1)}
+.open .gear{transform:rotate(180deg)}
+.drawer{display:grid;grid-template-rows:0fr;transition:grid-template-rows .38s cubic-bezier(.22,1,.36,1)}
+.drawer.open{grid-template-rows:1fr}
+.drawer>div{overflow:hidden}
+/* battery ring */
+.ring-fg{transition:stroke-dashoffset .6s ease,stroke .3s ease;filter:drop-shadow(0 0 6px rgba(255,69,0,.7))}
+.charging .ring-fg{animation:chargePulse 1.2s ease-in-out infinite}
+@keyframes chargePulse{0%,100%{stroke-width:10}50%{stroke-width:14}}
+/* toggle switch */
+.tgl{width:58px;height:30px;border:3px solid #52525b;background:#131315;position:relative;cursor:pointer;flex-shrink:0;transition:border-color .2s}
+.tgl::after{content:'';position:absolute;top:2px;left:2px;width:20px;height:20px;background:#71717a;transition:all .2s}
+.tgl[aria-checked="true"]{border-color:var(--acc)}
+.tgl[aria-checked="true"]::after{left:30px;background:var(--acc);box-shadow:var(--glow)}
+/* dial */
+#dial{width:150px;height:150px;border-radius:9999px;border:3px solid #52525b;background:conic-gradient(from 0deg,#1c1c1f,#0c0c0e,#1c1c1f);position:relative;cursor:pointer;transition:border-color .2s}
+#dial:hover{border-color:var(--acc)}
+#dialPointer{position:absolute;left:50%;top:8px;width:8px;height:44px;margin-left:-4px;background:var(--acc);box-shadow:var(--glow);border-radius:2px;transform-origin:4px 67px;transition:transform .35s cubic-bezier(.22,1,.36,1)}
+#dialHub{position:absolute;left:50%;top:50%;width:56px;height:56px;margin:-28px 0 0 -28px;border-radius:9999px;background:#09090b;border:3px solid #71717a;display:flex;align-items:center;justify-content:center;font-family:ui-monospace,monospace;font-size:10px;color:#fff}
+/* chunky slider */
+input[type=range].chunk{-webkit-appearance:none;width:100%;height:18px;background:#131315;border:3px solid #3f3f46;outline:none}
+input[type=range].chunk::-webkit-slider-thumb{-webkit-appearance:none;width:34px;height:34px;background:var(--acc);border:3px solid #fff;box-shadow:var(--glow);cursor:pointer}
+input[type=range].chunk::-moz-range-thumb{width:28px;height:28px;background:var(--acc);border:3px solid #fff;border-radius:0;cursor:pointer}
+.marquee{display:flex;overflow:hidden;white-space:nowrap}
+.marquee-track{display:flex;flex-shrink:0;min-width:100%;animation:mscroll 20s linear infinite}
+body[data-power="boost"] .marquee-track{animation-duration:9s}
+body[data-power="eco"] .marquee-track{animation-duration:34s}
+@keyframes mscroll{to{transform:translateX(-100%)}}
+.scanlines{background-image:repeating-linear-gradient(0deg,rgba(255,255,255,.03) 0 1px,transparent 1px 3px)}
+.tele{font-variant-numeric:tabular-nums}
+.matrixing{border-color:var(--acc)!important}
+.matrixing h3,.matrixing p{color:var(--acc)!important}
+</style>
+</head>
+<body data-power="normal" class="bg-[#09090b] text-zinc-100 min-h-screen flex flex-col font-sans antialiased">
+
+<!-- HARDWARE HEADER -->
+<div class="sticky top-0 z-40 bg-[#09090b] border-b-[3px] border-zinc-800">
+<div class="border-b border-zinc-900">
+<div class="max-w-6xl mx-auto px-4 h-9 flex items-center gap-3 font-mono text-[11px] tele">
+<span class="flex items-center gap-1.5 text-[#ff4500]"><span class="w-1.5 h-1.5 blink" style="background:var(--acc)"></span>CORE_OS // ONLINE</span>
+<span class="hidden sm:inline text-zinc-600">CORE.<span id="corePct">87</span>%</span>
+<span class="hidden md:inline text-zinc-600">PWR.<span id="pwrMode">NORMAL</span></span>
+<span class="ml-auto text-zinc-400" id="clock">00:00:00</span>
+</div>
+</div>
+<div class="max-w-6xl mx-auto px-4 h-14 flex items-center gap-3">
+<span class="font-mono text-xs tracking-widest font-bold">MAQIL<span style="color:var(--acc)">://</span>STUDIO_UNIT</span>
+<span class="hidden sm:inline-block h-4 w-8" style="background:var(--acc)"></span>
+<nav class="ml-auto hidden md:flex items-center gap-1 font-mono text-[11px] font-bold">
+<a href="#builds" class="px-3 py-2 border-[3px] border-transparent hover:border-zinc-600 text-zinc-400 hover:text-white transition">BUILDS</a>
+<a href="#caps" class="px-3 py-2 border-[3px] border-transparent hover:border-zinc-600 text-zinc-400 hover:text-white transition">MODULES</a>
+<a href="#contact" class="px-3 py-2 border-[3px] border-transparent hover:border-zinc-600 text-zinc-400 hover:text-white transition">CONTACT</a>
+<a href="#contact" class="ml-1 px-4 py-2 text-black font-bold border-[3px] border-white bg-white hover:bg-[#ff4500] hover:border-[#ff4500] hover:text-white transition">DEPLOY [+]</a>
+</nav>
+<button id="menuBtn" class="md:hidden ml-auto px-3 py-2 border-[3px] border-zinc-700 font-mono text-[11px] font-bold">MENU [+]</button>
+</div>
+<div id="mobileMenu" class="hidden md:hidden border-t-[3px] border-zinc-800 px-4 py-2 grid font-mono text-xs font-bold">
+<a href="#builds" class="py-2 text-zinc-400">BUILDS</a>
+<a href="#caps" class="py-2 text-zinc-400">MODULES</a>
+<a href="#contact" class="py-2 text-white">DEPLOY [+]</a>
+</div>
+</div>
+
+<main class="flex-1 w-full">
+<!-- HERO + BATTERY WIDGET -->
+<section class="relative border-b-[3px] border-zinc-800 overflow-hidden">
+<div class="absolute inset-0 dotmatrix opacity-30 pointer-events-none"></div>
+<div class="relative max-w-6xl mx-auto px-4 pt-14 pb-12 md:pt-20 md:pb-14 grid gap-10 lg:grid-cols-[1.25fr_.75fr] items-start">
+<div>
+<p class="reveal font-mono text-[11px] tracking-[0.3em]" style="color:var(--acc)">＋ HARDWARE EDITION ＋ STUDIO_UNIT.01</p>
+<h1 class="reveal display mt-4 text-6xl sm:text-8xl font-bold text-white">BUILT<br>LIKE<br>HARD<span style="color:var(--acc)">WARE.</span></h1>
+<p class="reveal mt-6 max-w-xl font-mono text-xs md:text-sm leading-relaxed text-zinc-400">FULL STACK ENGINEERING — LOCAL-FIRST ARCHITECTURE — CUSTOM AUTOMATION.<br><span class="text-zinc-600">SCREWED-TOGETHER SOFTWARE. ORANGE-GRADE POWER. ZERO PLACEHOLDERS.</span></p>
+<div class="reveal mt-8 flex flex-wrap gap-3">
+<a href="#builds" class="px-6 py-3.5 bg-white text-black font-mono text-xs font-bold border-[3px] border-white hover:bg-[#ff4500] hover:border-[#ff4500] hover:text-white transition card-lift">OPEN_MODULES [▼]</a>
+<a href="#contact" class="px-6 py-3.5 font-mono text-xs font-bold border-[3px] border-zinc-600 hover:border-white transition card-lift">CONTACT_MATRIX</a>
+</div>
+</div>
+<!-- BATTERY / TELEMETRY WIDGET -->
+<div class="reveal hw p-5" id="battWidget">
+<span class="cross" style="top:4px;left:8px">＋</span><span class="cross" style="top:4px;right:8px">＋</span><span class="cross" style="bottom:4px;left:8px">＋</span><span class="cross" style="bottom:4px;right:8px">＋</span>
+<span class="screw" style="top:22px;left:10px"></span><span class="screw" style="top:22px;right:10px"></span>
+<p class="font-mono text-[11px] tracking-[0.25em] text-zinc-500 text-center mt-3">PWR.CAPSULE // <span style="color:var(--acc)">LIVE</span></p>
+<div class="mt-2 flex items-center justify-center" id="ringWrap">
+<svg width="170" height="170" viewBox="0 0 170 170">
+<circle cx="85" cy="85" r="66" fill="none" stroke="#27272a" stroke-width="10"/>
+<circle id="ringFg" class="ring-fg" cx="85" cy="85" r="66" fill="none" stroke="#ff4500" stroke-width="10" stroke-linecap="square" transform="rotate(-90 85 85)"/>
+<text id="battPct" x="85" y="82" text-anchor="middle" fill="#fff" font-family="ui-monospace,monospace" font-size="30" font-weight="bold">87%</text>
+<text id="battState" x="85" y="104" text-anchor="middle" fill="#ff4500" font-family="ui-monospace,monospace" font-size="11">NORMAL</text>
+</svg>
+</div>
+<div class="mt-1 h-6 dotmatrix-orange opacity-70"></div>
+<div class="mt-3 grid gap-2.5 font-mono text-[11px] font-bold">
+<button class="flex items-center justify-between border-2 border-zinc-800 px-3 py-2 hover:border-zinc-500 transition" id="tglCharge" aria-checked="false"><span class="text-zinc-400">CHARGE.PULSE</span><span class="tgl" aria-checked="false"></span></button>
+<button class="flex items-center justify-between border-2 border-zinc-800 px-3 py-2 hover:border-zinc-500 transition" id="tglBoost" aria-checked="false"><span class="text-zinc-400">BOOST.MODE</span><span class="tgl" aria-checked="false"></span></button>
+<button class="flex items-center justify-between border-2 border-zinc-800 px-3 py-2 hover:border-zinc-500 transition" id="tglStream" aria-checked="true"><span class="text-zinc-400">DATA.STREAM</span><span class="tgl" aria-checked="true"></span></button>
+</div>
+<p class="mt-3 font-mono text-[10px] text-zinc-600 tele text-center" id="streamLine">VOLT 4.02V · TEMP 31°C · DRAW 1.2A</p>
+</div>
+</div>
+<div class="border-t-[3px] border-zinc-800 py-2.5 marquee font-mono text-[11px] tracking-[0.25em] text-zinc-500">
+<div class="marquee-track"><span class="px-4">··· FULL_STACK_WEB ··· LOCAL_FIRST ··· PYTHON_AUTOMATION ··· UI_ENGINEERING ··· <span style="color:var(--acc)">STUDIO POWER ONLINE</span> ···&nbsp;</span></div>
+<div class="marquee-track" aria-hidden="true"><span class="px-4">··· FULL_STACK_WEB ··· LOCAL_FIRST ··· PYTHON_AUTOMATION ··· UI_ENGINEERING ··· <span style="color:var(--acc)">STUDIO POWER ONLINE</span> ···&nbsp;</span></div>
+</div>
+</section>
+
+<!-- PROJECT GRID + ROTARY FILTER -->
+<section id="builds" class="border-b-[3px] border-zinc-800">
+<div class="max-w-6xl mx-auto px-4 py-14 md:py-20">
+<div class="grid gap-8 lg:grid-cols-[.7fr_1.3fr] items-start">
+<div>
+<p class="reveal font-mono text-[11px] tracking-[0.3em]" style="color:var(--acc)">＋ 01 / MODULAR_BUILDS</p>
+<h2 class="reveal display mt-2 text-4xl md:text-6xl font-bold">PLUG<br>AND<br>PLAY<span style="color:var(--acc)">.</span></h2>
+<!-- ROTARY DIAL -->
+<div class="reveal hw mt-6 p-5 text-center">
+<span class="screw" style="top:8px;left:8px"></span><span class="screw" style="top:8px;right:8px"></span>
+<p class="font-mono text-[10px] tracking-[0.25em] text-zinc-500">CATEGORY.DIAL // TACTILE</p>
+<div class="mt-3 flex justify-center"><div id="dial" role="listbox" aria-label="Category dial" tabindex="0"><div id="dialPointer"></div><div id="dialHub">ALL</div></div></div>
+<p class="mt-3 font-mono text-[11px] font-bold" style="color:var(--acc)" id="dialReadout">ALL_SYSTEMS</p>
+<div class="mt-4 text-left">
+<p class="font-mono text-[10px] tracking-widest text-zinc-600 mb-1.5">SLIDER.OVERRIDE</p>
+<input type="range" class="chunk" id="catSlider" min="0" max="3" step="1" value="0" aria-label="Category slider">
+<div class="flex justify-between font-mono text-[9px] text-zinc-600 mt-1"><span>ALL</span><span>WEB</span><span>CLI</span><span>DROID</span></div>
+</div>
+</div>
+</div>
+<div class="grid gap-4" id="workGrid">
+<!-- P1 -->
+<article class="work-card reveal hw card-lift cursor-pointer" data-cat="web" tabindex="0">
+<span class="cross" style="top:4px;left:8px">＋</span><span class="cross" style="top:4px;right:8px">＋</span>
+<span class="screw" style="top:22px;left:10px"></span><span class="screw" style="top:22px;right:10px"></span>
+<div class="p-5 flex items-center gap-3">
+<span class="h-4 w-10" style="background:var(--acc)"></span>
+<p class="font-mono text-[11px] font-bold text-zinc-400">WEB_APP // 001</p>
+<span class="ml-auto font-mono text-[11px] text-zinc-600">SLOT.A</span>
+<span class="gear font-mono text-lg" style="color:var(--acc)">⚙</span>
+</div>
+<div class="px-5 pb-5"><h3 class="text-2xl font-bold tracking-tight">MBYOK Assistant</h3>
+<p class="mt-1 font-mono text-[11px] text-zinc-500">CLICK TO UNSCREW MODULE [＋]</p></div>
+<div class="drawer"><div><div class="mx-5 mb-5 border-[3px] border-zinc-800 p-4 scanlines">
+<p class="text-sm text-zinc-300">A fast, friendly assistant experience. Clean interface, instant response, zero learning curve.</p>
+<div class="mt-3 grid grid-cols-2 gap-2 font-mono text-[11px] tele">
+<div class="border-2 border-zinc-800 px-2 py-1.5"><span class="text-zinc-600">BOOT</span><br><span class="font-bold">INSTANT</span></div>
+<div class="border-2 border-zinc-800 px-2 py-1.5"><span class="text-zinc-600">MODE</span><br><span class="font-bold">OFFLINE</span></div>
+<div class="border-2 border-zinc-800 px-2 py-1.5"><span class="text-zinc-600">STACK</span><br><span class="font-bold">JS·TW</span></div>
+<div class="border-2 border-zinc-800 px-2 py-1.5"><span class="text-zinc-600">STATE</span><br><span class="font-bold">LOCAL</span></div>
+</div>
+<div class="mt-3 flex gap-2">
+<a href="#contact" class="flex-1 text-center px-3 py-2.5 bg-white text-black font-mono text-[11px] font-bold border-2 border-white hover:bg-[#ff4500] hover:border-[#ff4500] hover:text-white transition">DEPLOY_SIMILAR [>>]</a>
+<button class="copySpecs flex-1 px-3 py-2.5 font-mono text-[11px] font-bold border-2 border-zinc-700 hover:border-white transition">COPY_STACK [⧉]</button>
+</div>
+</div></div></div>
+</article>
+<!-- P2 -->
+<article class="work-card reveal hw card-lift cursor-pointer" data-cat="web" tabindex="0">
+<span class="cross" style="top:4px;left:8px">＋</span><span class="cross" style="top:4px;right:8px">＋</span>
+<span class="screw" style="top:22px;left:10px"></span><span class="screw" style="top:22px;right:10px"></span>
+<div class="p-5 flex items-center gap-3">
+<span class="h-4 w-10 bg-white"></span>
+<p class="font-mono text-[11px] font-bold text-zinc-400">WEB_APP // 002</p>
+<span class="ml-auto font-mono text-[11px] text-zinc-600">SLOT.B</span>
+<span class="gear font-mono text-lg" style="color:var(--acc)">⚙</span>
+</div>
+<div class="px-5 pb-5"><h3 class="text-2xl font-bold tracking-tight">Secure Snippet Vault</h3>
+<p class="mt-1 font-mono text-[11px] text-zinc-500">CLICK TO UNSCREW MODULE [＋]</p></div>
+<div class="drawer"><div><div class="mx-5 mb-5 border-[3px] border-zinc-800 p-4 scanlines">
+<p class="text-sm text-zinc-300">A private vault for code snippets. Save, search and organize on-device with encrypted backup.</p>
+<div class="mt-3 grid grid-cols-2 gap-2 font-mono text-[11px] tele">
+<div class="border-2 border-zinc-800 px-2 py-1.5"><span class="text-zinc-600">SEARCH</span><br><span class="font-bold">INSTANT</span></div>
+<div class="border-2 border-zinc-800 px-2 py-1.5"><span class="text-zinc-600">COPY</span><br><span class="font-bold">1-CLICK</span></div>
+<div class="border-2 border-zinc-800 px-2 py-1.5"><span class="text-zinc-600">CRYPT</span><br><span class="font-bold">AES-GCM</span></div>
+<div class="border-2 border-zinc-800 px-2 py-1.5"><span class="text-zinc-600">FILE</span><br><span class="font-bold">.JSON</span></div>
+</div>
+<div class="mt-3 flex gap-2">
+<a href="#contact" class="flex-1 text-center px-3 py-2.5 bg-white text-black font-mono text-[11px] font-bold border-2 border-white hover:bg-[#ff4500] hover:border-[#ff4500] hover:text-white transition">DEPLOY_SIMILAR [>>]</a>
+<button class="copySpecs flex-1 px-3 py-2.5 font-mono text-[11px] font-bold border-2 border-zinc-700 hover:border-white transition">COPY_STACK [⧉]</button>
+</div>
+</div></div></div>
+</article>
+<!-- P3 -->
+<article class="work-card reveal hw card-lift cursor-pointer" data-cat="cli" tabindex="0">
+<span class="cross" style="top:4px;left:8px">＋</span><span class="cross" style="top:4px;right:8px">＋</span>
+<span class="screw" style="top:22px;left:10px"></span><span class="screw" style="top:22px;right:10px"></span>
+<div class="p-5 flex items-center gap-3">
+<span class="h-4 w-10" style="background:var(--acc)"></span>
+<p class="font-mono text-[11px] font-bold text-zinc-400">CLI_TOOL // 003</p>
+<span class="ml-auto font-mono text-[11px] text-zinc-600">SLOT.C</span>
+<span class="gear font-mono text-lg" style="color:var(--acc)">⚙</span>
+</div>
+<div class="px-5 pb-5"><h3 class="text-2xl font-bold tracking-tight">Vault Export CLI</h3>
+<p class="mt-1 font-mono text-[11px] text-zinc-500">CLICK TO UNSCREW MODULE [＋]</p></div>
+<div class="drawer"><div><div class="mx-5 mb-5 border-[3px] border-zinc-800 p-4 scanlines">
+<p class="text-sm text-zinc-300">Command-line backup and restore companion. Pipe it, script it, schedule it.</p>
+<div class="mt-3 grid grid-cols-2 gap-2 font-mono text-[11px] tele">
+<div class="border-2 border-zinc-800 px-2 py-1.5"><span class="text-zinc-600">LANG</span><br><span class="font-bold">PYTHON</span></div>
+<div class="border-2 border-zinc-800 px-2 py-1.5"><span class="text-zinc-600">IO</span><br><span class="font-bold">PIPES</span></div>
+<div class="border-2 border-zinc-800 px-2 py-1.5"><span class="text-zinc-600">RUN</span><br><span class="font-bold">SCRIPT</span></div>
+<div class="border-2 border-zinc-800 px-2 py-1.5"><span class="text-zinc-600">SPEED</span><br><span class="font-bold">FAST</span></div>
+</div>
+<div class="mt-3 flex gap-2">
+<a href="#contact" class="flex-1 text-center px-3 py-2.5 bg-white text-black font-mono text-[11px] font-bold border-2 border-white hover:bg-[#ff4500] hover:border-[#ff4500] hover:text-white transition">DEPLOY_SIMILAR [>>]</a>
+<button class="copySpecs flex-1 px-3 py-2.5 font-mono text-[11px] font-bold border-2 border-zinc-700 hover:border-white transition">COPY_STACK [⧉]</button>
+</div>
+</div></div></div>
+</article>
+<!-- P4 -->
+<article class="work-card reveal hw card-lift cursor-pointer" data-cat="android" tabindex="0">
+<span class="cross" style="top:4px;left:8px">＋</span><span class="cross" style="top:4px;right:8px">＋</span>
+<span class="screw" style="top:22px;left:10px"></span><span class="screw" style="top:22px;right:10px"></span>
+<div class="p-5 flex items-center gap-3">
+<span class="h-4 w-10 bg-white"></span>
+<p class="font-mono text-[11px] font-bold text-zinc-400">ANDROID // 004</p>
+<span class="ml-auto font-mono text-[11px] text-zinc-600">SLOT.D</span>
+<span class="gear font-mono text-lg" style="color:var(--acc)">⚙</span>
+</div>
+<div class="px-5 pb-5"><h3 class="text-2xl font-bold tracking-tight">Android Mod Kit</h3>
+<p class="mt-1 font-mono text-[11px] text-zinc-500">CLICK TO UNSCREW MODULE [＋]</p></div>
+<div class="drawer"><div><div class="mx-5 mb-5 border-[3px] border-zinc-800 p-4 scanlines">
+<p class="text-sm text-zinc-300">Launcher-grade customization pack. Themes, widgets and gesture polish for daily drivers.</p>
+<div class="mt-3 grid grid-cols-2 gap-2 font-mono text-[11px] tele">
+<div class="border-2 border-zinc-800 px-2 py-1.5"><span class="text-zinc-600">TARGET</span><br><span class="font-bold">ANDROID</span></div>
+<div class="border-2 border-zinc-800 px-2 py-1.5"><span class="text-zinc-600">WORK</span><br><span class="font-bold">UI MODS</span></div>
+<div class="border-2 border-zinc-800 px-2 py-1.5"><span class="text-zinc-600">FEEL</span><br><span class="font-bold">NATIVE</span></div>
+<div class="border-2 border-zinc-800 px-2 py-1.5"><span class="text-zinc-600">PERF</span><br><span class="font-bold">TUNED</span></div>
+</div>
+<div class="mt-3 flex gap-2">
+<a href="#contact" class="flex-1 text-center px-3 py-2.5 bg-white text-black font-mono text-[11px] font-bold border-2 border-white hover:bg-[#ff4500] hover:border-[#ff4500] hover:text-white transition">DEPLOY_SIMILAR [>>]</a>
+<button class="copySpecs flex-1 px-3 py-2.5 font-mono text-[11px] font-bold border-2 border-zinc-700 hover:border-white transition">COPY_STACK [⧉]</button>
+</div>
+</div></div></div>
+</article>
+</div>
+</div>
+</div>
+</section>
+
+<!-- SERVICES / HARDWARE MODULES -->
+<section id="caps" class="border-b-[3px] border-zinc-800 scanlines">
+<div class="max-w-6xl mx-auto px-4 py-14 md:py-20">
+<p class="reveal font-mono text-[11px] tracking-[0.3em]" style="color:var(--acc)">＋ 02 / HARDWARE_MODULES</p>
+<h2 class="reveal display mt-2 text-4xl md:text-6xl font-bold">SOCKET<br>BOARD<span style="color:var(--acc)">.</span></h2>
+<div class="mt-8 grid gap-4 sm:grid-cols-2">
+<div class="cap reveal hw card-lift p-6 cursor-pointer" tabindex="0">
+<span class="screw" style="top:8px;left:8px"></span><span class="screw" style="top:8px;right:8px"></span><span class="screw" style="bottom:8px;left:8px"></span><span class="screw" style="bottom:8px;right:8px"></span>
+<p class="font-mono text-3xl">⌁</p><h3 class="mt-2 font-mono text-xs tracking-[0.2em] font-bold">FULL_STACK_WEB <span class="gear" style="color:var(--acc)">⚙</span></h3>
+<p class="mt-2 text-sm text-zinc-500">SPAs, landing pages and Tailwind UI systems.</p>
+<div class="drawer"><div><div class="pt-4"><p class="text-sm text-zinc-300 border-t-[3px] border-zinc-800 pt-3">End-to-end web builds — architecture, interface, deployment. One socket, full power.</p>
+<div class="mt-3 flex gap-2"><a href="#contact" class="flex-1 text-center px-3 py-2 bg-white text-black font-mono text-[11px] font-bold border-2 border-white hover:bg-[#ff4500] hover:border-[#ff4500] hover:text-white transition">PLUG_IN [>>]</a></div>
+</div></div></div>
+</div>
+<div class="cap reveal hw card-lift p-6 cursor-pointer" tabindex="0">
+<span class="screw" style="top:8px;left:8px"></span><span class="screw" style="top:8px;right:8px"></span><span class="screw" style="bottom:8px;left:8px"></span><span class="screw" style="bottom:8px;right:8px"></span>
+<p class="font-mono text-3xl" style="color:var(--acc)">◈</p><h3 class="mt-2 font-mono text-xs tracking-[0.2em] font-bold">LOCAL_FIRST_ARCH <span class="gear" style="color:var(--acc)">⚙</span></h3>
+<p class="mt-2 text-sm text-zinc-500">Offline storage, Web Crypto, private sync.</p>
+<div class="drawer"><div><div class="pt-4"><p class="text-sm text-zinc-300 border-t-[3px] border-zinc-800 pt-3">Data lives on-device first, encrypted by default, synced only when it makes sense.</p>
+<div class="mt-3 flex gap-2"><a href="#contact" class="flex-1 text-center px-3 py-2 bg-white text-black font-mono text-[11px] font-bold border-2 border-white hover:bg-[#ff4500] hover:border-[#ff4500] hover:text-white transition">PLUG_IN [>>]</a></div>
+</div></div></div>
+</div>
+<div class="cap reveal hw card-lift p-6 cursor-pointer" tabindex="0">
+<span class="screw" style="top:8px;left:8px"></span><span class="screw" style="top:8px;right:8px"></span><span class="screw" style="bottom:8px;left:8px"></span><span class="screw" style="bottom:8px;right:8px"></span>
+<p class="font-mono text-3xl" style="color:var(--acc)">⚙</p><h3 class="mt-2 font-mono text-xs tracking-[0.2em] font-bold">PYTHON_AUTOMATION <span class="gear" style="color:var(--acc)">⚙</span></h3>
+<p class="mt-2 text-sm text-zinc-500">Scripts, forms, API glue that removes work.</p>
+<div class="drawer"><div><div class="pt-4"><p class="text-sm text-zinc-300 border-t-[3px] border-zinc-800 pt-3">Custom pipelines and integrations — boring tasks disappear, throughput goes up.</p>
+<div class="mt-3 flex gap-2"><a href="#contact" class="flex-1 text-center px-3 py-2 bg-white text-black font-mono text-[11px] font-bold border-2 border-white hover:bg-[#ff4500] hover:border-[#ff4500] hover:text-white transition">PLUG_IN [>>]</a></div>
+</div></div></div>
+</div>
+<div class="cap reveal hw card-lift p-6 cursor-pointer" tabindex="0">
+<span class="screw" style="top:8px;left:8px"></span><span class="screw" style="top:8px;right:8px"></span><span class="screw" style="bottom:8px;left:8px"></span><span class="screw" style="bottom:8px;right:8px"></span>
+<p class="font-mono text-3xl">▣</p><h3 class="mt-2 font-mono text-xs tracking-[0.2em] font-bold">UI_ENGINEERING <span class="gear" style="color:var(--acc)">⚙</span></h3>
+<p class="mt-2 text-sm text-zinc-500">Brutalist systems, motion, accessibility.</p>
+<div class="drawer"><div><div class="pt-4"><p class="text-sm text-zinc-300 border-t-[3px] border-zinc-800 pt-3">High-contrast interfaces with purposeful motion — readable, responsive, unmistakable.</p>
+<div class="mt-3 flex gap-2"><a href="#contact" class="flex-1 text-center px-3 py-2 bg-white text-black font-mono text-[11px] font-bold border-2 border-white hover:bg-[#ff4500] hover:border-[#ff4500] hover:text-white transition">PLUG_IN [>>]</a></div>
+</div></div></div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+<div class="max-w-6xl mx-auto px-4 py-14 md:py-20 grid gap-8 md:grid-cols-2">
+<div>
+<p class="reveal font-mono text-[11px] tracking-[0.3em]" style="color:var(--acc)">＋ 03 / CONTACT_MATRIX</p>
+<h2 class="reveal display mt-2 text-4xl md:text-6xl font-bold">JACK<br>IN<span style="color:var(--acc)">.</span></h2>
+<div class="reveal mt-6 hw p-5 font-mono text-xs tele">
+<span class="screw" style="top:8px;right:8px"></span>
+<p><span class="text-zinc-600">PWR →</span> <span style="color:var(--acc)">●</span> OPEN_FOR_PROJECTS</p>
+<p class="mt-1"><span class="text-zinc-600">RES →</span> 24H RESPONSE</p>
+<p class="mt-1"><span class="text-zinc-600">CH →</span> WEB3FORMS UPLINK</p>
+</div>
+</div>
+<form action="https://api.web3forms.com/submit" method="POST" id="studioForm" class="reveal hw p-6 grid gap-4 h-fit">
+<span class="cross" style="top:4px;left:8px">＋</span><span class="cross" style="top:4px;right:8px">＋</span><span class="cross" style="bottom:4px;left:8px">＋</span><span class="cross" style="bottom:4px;right:8px">＋</span>
+<input type="hidden" name="access_key" value="YOUR_ACCESS_KEY_HERE">
+<input type="hidden" name="subject" value="New studio inquiry">
+<input type="checkbox" name="botcheck" class="hidden" style="display:none">
+<div>
+<label for="sName" class="block font-mono text-[11px] tracking-widest text-zinc-500 mb-1.5">NAME //</label>
+<input id="sName" name="name" type="text" required placeholder="Jane Doe" class="w-full bg-black border-[3px] border-zinc-800 focus:border-[#ff4500] outline-none text-sm px-3 py-3 placeholder:text-zinc-700 transition font-mono">
+</div>
+<div>
+<label for="sEmail" class="block font-mono text-[11px] tracking-widest text-zinc-500 mb-1.5">EMAIL //</label>
+<input id="sEmail" name="email" type="email" required placeholder="jane@company.com" class="w-full bg-black border-[3px] border-zinc-800 focus:border-[#ff4500] outline-none text-sm px-3 py-3 placeholder:text-zinc-700 transition font-mono">
+</div>
+<div>
+<label for="sMsg" class="block font-mono text-[11px] tracking-widest text-zinc-500 mb-1.5">MESSAGE //</label>
+<textarea id="sMsg" name="message" rows="5" required placeholder="Goals, timeline, budget…" class="w-full bg-black border-[3px] border-zinc-800 focus:border-[#ff4500] outline-none text-sm px-3 py-3 placeholder:text-zinc-700 resize-y min-h-[130px] transition font-mono"></textarea>
+</div>
+<button type="submit" id="studioBtn" class="px-5 py-3.5 font-mono text-xs font-bold bg-white text-black border-[3px] border-white hover:bg-[#ff4500] hover:border-[#ff4500] hover:text-white transition">TRANSMIT [>>]</button>
+<p id="studioStatus" class="hidden font-mono text-xs"></p>
+</form>
+</div>
+</section>
+</main>
+
+<div class="border-t-[3px] border-zinc-800">
+<div class="max-w-6xl mx-auto px-4 py-4 flex flex-wrap justify-between gap-2 font-mono text-[11px] text-zinc-600 tele">
+<span>© <span id="year"></span> MAQIL://STUDIO_UNIT</span>
+<span class="hidden sm:block">PWR.<span id="footPwr">NORMAL</span> · CORE.<span id="footCore">87</span>%</span>
+<span style="color:var(--acc)">● ONLINE</span>
+</div>
+</div>
+
+<footer style="width:100%; text-align:center; padding:16px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size:12px; color:#71717a; border-top:1px solid #27272a; background:#09090b; margin-top:auto;">
+  Generated by <strong>openCode AI</strong> — Open-Source Autonomous Agent
+</footer>
+
+<script>
+'use strict';
+document.getElementById('year').textContent = new Date().getFullYear();
+const clockEl = document.getElementById('clock');
+setInterval(() => { clockEl.textContent = new Date().toLocaleTimeString('en-GB'); }, 1000);
+clockEl.textContent = new Date().toLocaleTimeString('en-GB');
+const menuBtn = document.getElementById('menuBtn');
+const mobileMenu = document.getElementById('mobileMenu');
+menuBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mobileMenu.classList.add('hidden')));
+const io = new IntersectionObserver((es) => es.forEach(x => { if (x.isIntersecting) { x.target.classList.add('visible'); io.unobserve(x.target); } }), { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+/* ---- BATTERY / TELEMETRY WIDGET ---- */
+const ringFg = document.getElementById('ringFg');
+const battPct = document.getElementById('battPct');
+const battState = document.getElementById('battState');
+const ringWrap = document.getElementById('ringWrap');
+const streamLine = document.getElementById('streamLine');
+const corePct = document.getElementById('corePct');
+const pwrMode = document.getElementById('pwrMode');
+const footPwr = document.getElementById('footPwr');
+const footCore = document.getElementById('footCore');
+const C = 2 * Math.PI * 66;
+ringFg.style.strokeDasharray = C;
+let pct = 87, charging = false, boost = false, stream = true;
+function paintBatt() {
+  ringFg.style.strokeDashoffset = C * (1 - pct / 100);
+  ringFg.style.stroke = pct <= 20 ? '#ef4444' : '#ff4500';
+  battPct.textContent = Math.round(pct) + '%';
+  const mode = boost ? 'BOOST' : (charging ? 'CHARGING' : 'NORMAL');
+  battState.textContent = mode;
+  if (corePct) corePct.textContent = Math.round(pct);
+  if (footCore) footCore.textContent = Math.round(pct);
+  if (pwrMode) pwrMode.textContent = mode;
+  if (footPwr) footPwr.textContent = mode;
+  document.body.dataset.power = boost ? 'boost' : (pct <= 20 ? 'eco' : 'normal');
+  ringWrap.parentElement.classList.toggle('charging', charging || boost);
+}
+paintBatt();
+setInterval(() => {
+  if (charging || boost) pct = Math.min(100, pct + (boost ? 1.4 : 0.7));
+  else pct = Math.max(5, pct - 0.15);
+  paintBatt();
+}, 900);
+setInterval(() => {
+  if (!stream) { streamLine.textContent = 'STREAM SUSPENDED — TOGGLE DATA.STREAM'; return; }
+  const v = (3.6 + Math.random() * 0.7).toFixed(2);
+  const t = Math.round(28 + Math.random() * 9 + (boost ? 6 : 0));
+  const a = (0.8 + Math.random() * 1.4 + (boost ? 0.8 : 0)).toFixed(1);
+  streamLine.textContent = 'VOLT ' + v + 'V · TEMP ' + t + '°C · DRAW ' + a + 'A';
+}, 1200);
+function bindToggle(id, get, set) {
+  const btn = document.getElementById(id);
+  const knob = btn.querySelector('.tgl');
+  btn.addEventListener('click', () => {
+    const v = !get(); set(v);
+    btn.setAttribute('aria-checked', v); knob.setAttribute('aria-checked', v);
+    paintBatt();
+  });
+}
+bindToggle('tglCharge', () => charging, v => charging = v);
+bindToggle('tglBoost', () => boost, v => boost = v);
+bindToggle('tglStream', () => stream, v => stream = v);
+
+/* ---- MECHANICAL DRAWERS (event delegation) ---- */
+document.addEventListener('click', (e) => {
+  if (e.target.closest('a,button.copySpecs')) return;
+  const card = e.target.closest('.work-card, .cap');
+  if (!card) return;
+  const d = card.querySelector('.drawer');
+  const isOpen = d.classList.toggle('open');
+  card.classList.toggle('open', isOpen);
+});
+document.addEventListener('keydown', (e) => {
+  if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('.work-card,.cap')) {
+    e.preventDefault(); e.target.click();
+  }
+});
+document.addEventListener('mouseover', (e) => {
+  const card = e.target.closest && e.target.closest('.work-card, .cap');
+  if (card) card.style.borderColor = '#ff4500';
+});
+document.addEventListener('mouseout', (e) => {
+  const card = e.target.closest && e.target.closest('.work-card, .cap');
+  if (card && !(card.querySelector('.drawer') || {classList:{contains:()=>false}}).classList) return;
+  if (card) card.style.borderColor = '';
+});
+document.addEventListener('click', async (e) => {
+  const b = e.target.closest('.copySpecs');
+  if (!b) return;
+  e.stopPropagation();
+  const card = b.closest('.work-card, .cap');
+  const txt = card.querySelector('h3').textContent + ' — ' + card.querySelector('.drawer').innerText.trim();
+  try { await navigator.clipboard.writeText(txt); } catch { const t = document.createElement('textarea'); t.value = txt; document.body.appendChild(t); t.select(); document.execCommand('copy'); t.remove(); }
+  const o = b.textContent; b.textContent = 'COPIED [✓]'; setTimeout(() => b.textContent = o, 1300);
+});
+
+/* ---- ROTARY DIAL + SLIDER FILTERS ---- */
+const CATS = ['all', 'web', 'cli', 'android'];
+const NAMES = { all: 'ALL_SYSTEMS', web: 'WEB_APPS', cli: 'CLI_TOOLS', android: 'ANDROID' };
+const ANGLES = { all: -60, web: -20, cli: 20, android: 60 };
+const dial = document.getElementById('dial');
+const pointer = document.getElementById('dialPointer');
+const hub = document.getElementById('dialHub');
+const readout = document.getElementById('dialReadout');
+const slider = document.getElementById('catSlider');
+let catIdx = 0;
+const GLYPHS = '!<>-_\\/[]{}=+*^?#01';
+function scramble(el, finalText, done) {
+  let f = 0; const total = 12;
+  const iv = setInterval(() => {
+    el.textContent = Array.from(finalText).map(ch => ch === ' ' ? ' ' : GLYPHS[Math.floor(Math.random() * GLYPHS.length)]).join('');
+    if (++f >= total) { clearInterval(iv); el.textContent = finalText; if (done) done(); }
+  }, 26);
+}
+function setCat(idx) {
+  catIdx = (idx + CATS.length) % CATS.length;
+  const cat = CATS[catIdx];
+  pointer.style.transform = 'rotate(' + ANGLES[cat] + 'deg)';
+  hub.textContent = cat === 'all' ? 'ALL' : cat.toUpperCase().slice(0, 4);
+  readout.textContent = NAMES[cat];
+  slider.value = catIdx;
+  document.querySelectorAll('.work-card').forEach(c => {
+    const show = cat === 'all' || c.dataset.cat === cat;
+    c.style.display = show ? '' : 'none';
+    if (show) {
+      c.classList.add('matrixing');
+      const h = c.querySelector('h3'); const orig = h.textContent;
+      scramble(h, orig, () => c.classList.remove('matrixing'));
+    }
+  });
+}
+dial.addEventListener('click', () => setCat(catIdx + 1));
+dial.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight') setCat(catIdx + 1); if (e.key === 'ArrowLeft') setCat(catIdx - 1); });
+slider.addEventListener('input', () => setCat(parseInt(slider.value, 10)));
+setCat(0);
+
+/* ---- CONTACT ---- */
+const form = document.getElementById('studioForm');
+const status = document.getElementById('studioStatus');
+const sendBtn = document.getElementById('studioBtn');
+function setStatus(msg, ok) {
+  status.textContent = msg; status.classList.remove('hidden');
+  status.className = 'font-mono text-xs ' + (ok ? 'text-emerald-400' : 'text-[#ff4500]');
+}
+form.addEventListener('submit', async (e) => {
+  const key = form.querySelector('input[name="access_key"]').value;
+  if (!key || key === 'YOUR_ACCESS_KEY_HERE') { setStatus('>> SET Web3Forms access_key TO ENABLE TRANSMISSION.', false); e.preventDefault(); return; }
+  e.preventDefault();
+  sendBtn.disabled = true; sendBtn.textContent = 'TRANSMITTING…';
+  try {
+    const res = await fetch(form.action, { method: 'POST', body: new FormData(form) });
+    const data = await res.json();
+    if (data.success) { setStatus('>> SIGNAL RECEIVED. REPLY WITHIN 24H.', true); form.reset(); }
+    else setStatus('>> TRANSMISSION FAILED: ' + (data.message || res.status), false);
+  } catch (err) { setStatus('>> LINK ERROR: ' + err.message, false); }
+  finally { sendBtn.disabled = false; sendBtn.textContent = 'TRANSMIT [>>]'; }
+});
+</script>
+</body>
+</html>
